@@ -212,4 +212,8 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 
+    // custom config values
+    'secret_key' => env('SECRET_KEY'),
+
+
 ];
