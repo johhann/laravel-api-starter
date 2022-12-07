@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
 
 class BackupDatabase extends Command
@@ -25,8 +26,16 @@ class BackupDatabase extends Command
 
     public function handle()
     {
-        $command = "mysqldump --user=" . $this->username ." --password=" . $this->password . " --host=" . env('DB_HOST') . " " . $this->database . "  | gzip > " . storage_path() . "/backups/" . $this->database . "_export-" . now()->format('Y-m-d') . '.gz';
 
-        exec($command);
+        try {
+            $command = "mysqldump --user=" . $this->username ." --password=" . $this->password . " --host=" . env('DB_HOST') . " " . $this->database . "  | gzip > " . storage_path() . "/backups/" . $this->database . "_export-" . now()->format('Y-m-d') . '.gz';
+            exec($command);
+
+            $this->info('The backup has been proceed successfully.');
+        } catch (\Exception $exception) {
+            Log::error($exception);
+            $this->error('The backup process has been failed.');
+        }
+
     }
 }
